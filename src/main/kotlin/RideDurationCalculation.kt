@@ -19,7 +19,7 @@ object RideDurationCalculation {
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
         val (ridingDurations, pausingDurations) = getRideDurations(rideEvents, now)
-        val (billableRidingDurations, billablePausingDurations) = getBillableDurations(
+        val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
             lastBillableTime,
             freeTime
@@ -29,7 +29,7 @@ object RideDurationCalculation {
             return RideDurations(ridingDurations.duration, pausingDurations.duration, Duration.ZERO, Duration.ZERO)
         }
 
-        return RideDurations(ridingDurations.duration, pausingDurations.duration, billableRidingDurations.billableDuration, billablePausingDurations.billableDuration)
+        return RideDurations(ridingDurations.duration, pausingDurations.duration, billableRidingDuration, billablePausingDuration)
     }
 
     private fun getRideDurations(
@@ -60,7 +60,7 @@ object RideDurationCalculation {
         rideEvents: List<RideEvent>,
         lastBillableTime: Instant,
         freeTime: Duration
-    ): Pair<StateDuration, StateDuration> {
+    ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
         var freeTime1 = freeTime
         var ridingDuration: Duration = ZERO
@@ -98,7 +98,7 @@ object RideDurationCalculation {
 
         ridingDurations.increment(Duration.ZERO, spanBillableDuration)
         ridingDuration += spanBillableDuration
-        return Pair(ridingDurations, pausingDurations)
+        return Pair(ridingDuration, pausingDuration)
     }
 
     private fun getBillableDuration(duration: Duration, freeTime: Duration): Pair<Duration, Duration> =
