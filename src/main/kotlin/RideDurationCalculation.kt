@@ -13,9 +13,6 @@ object RideDurationCalculation {
         billableDurationInSeconds: Long,
         now: Instant = Instant.now(),
     ): RideDurations {
-        var lastEventTime = rideEvents.first().occurredOn
-        var lastBillableTime = lastEventTime.plusSeconds(billableDurationInSeconds)
-
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
         val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now)
