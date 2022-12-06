@@ -19,7 +19,8 @@ object RideDurationCalculation {
         val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
             freeTime,
-            billableDurationInSeconds
+            billableDurationInSeconds,
+            subscriptionName
         )
 
         if (ridingDuration + pausingDuration < 2.minutes) {
@@ -38,7 +39,8 @@ object RideDurationCalculation {
     private fun getBillableDurations(
         rideEvents: List<RideEvent>,
         initialFreeTime: Duration,
-        billableDurationInSeconds: Long
+        billableDurationInSeconds: Long,
+        subscriptionName: String
     ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
         var lastBillableTime = lastEventTime.plusSeconds(billableDurationInSeconds)
