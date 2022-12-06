@@ -17,10 +17,9 @@ object RideDurationCalculation {
 
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
-        val (ridingDurations, pausingDurations) = getRideDurations(rideEvents, lastEventTime, now)
+        val (ridingDurations, pausingDurations) = getRideDurations(rideEvents, now)
         val (billableRidingDurations, billablePausingDurations) = getBillableDurations(
             rideEvents,
-            lastEventTime,
             lastBillableTime,
             freeTime
         )
@@ -34,16 +33,15 @@ object RideDurationCalculation {
 
     private fun getRideDurations(
         rideEvents: List<RideEvent>,
-        lastEventTime: Instant,
         now: Instant
     ): Pair<StateDuration, StateDuration> {
-        var lastEventTime1 = lastEventTime
+        var lastEventTime = rideEvents.first().occurredOn
         val ridingDurations = StateDuration()
         val pausingDurations = StateDuration()
         rideEvents.forEach { rideEvent ->
-            val realDuration = durationBetween(lastEventTime1, rideEvent.occurredOn)
+            val realDuration = durationBetween(lastEventTime, rideEvent.occurredOn)
 
-            lastEventTime1 = rideEvent.occurredOn
+            lastEventTime = rideEvent.occurredOn
 
             when (rideEvent.type) {
                 RideEventType.PAUSED -> ridingDurations.increment(realDuration, Duration.ZERO)
@@ -52,28 +50,27 @@ object RideDurationCalculation {
             }
         }
 
-        val realDuration = durationBetween(lastEventTime1, now)
+        val realDuration = durationBetween(lastEventTime, now)
 
         ridingDurations.increment(realDuration, Duration.ZERO)
         return Pair(ridingDurations, pausingDurations)
     }
     private fun getBillableDurations(
         rideEvents: List<RideEvent>,
-        lastEventTime: Instant,
         lastBillableTime: Instant,
         freeTime: Duration
     ): Pair<StateDuration, StateDuration> {
-        var lastEventTime1 = lastEventTime
+        var lastEventTime = rideEvents.first().occurredOn
         var freeTime1 = freeTime
         val ridingDurations = StateDuration()
         val pausingDurations = StateDuration()
         rideEvents.forEach { rideEvent ->
             val potentialBillableDuration =
-                if (lastBillableTime < lastEventTime1) Duration.ZERO
-                else if (lastBillableTime < rideEvent.occurredOn) durationBetween(lastEventTime1, lastBillableTime)
-                else durationBetween(lastEventTime1, minOf(rideEvent.occurredOn, lastBillableTime))
+                if (lastBillableTime < lastEventTime) Duration.ZERO
+                else if (lastBillableTime < rideEvent.occurredOn) durationBetween(lastEventTime, lastBillableTime)
+                else durationBetween(lastEventTime, minOf(rideEvent.occurredOn, lastBillableTime))
 
-            lastEventTime1 = rideEvent.occurredOn
+            lastEventTime = rideEvent.occurredOn
 
             val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime1)
             freeTime1 = newFreeTime
@@ -86,8 +83,8 @@ object RideDurationCalculation {
         }
 
         val potentialBillableDuration =
-            if (lastBillableTime < lastEventTime1) Duration.ZERO
-            else durationBetween(lastEventTime1, lastBillableTime)
+            if (lastBillableTime < lastEventTime) Duration.ZERO
+            else durationBetween(lastEventTime, lastBillableTime)
         val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime1)
 
         ridingDurations.increment(Duration.ZERO, spanBillableDuration)
