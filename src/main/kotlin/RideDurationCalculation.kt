@@ -18,43 +18,47 @@ object RideDurationCalculation {
 
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
-        val (ridingDurations, pausingDurations) = getRideDurations(rideEvents, now)
+        val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now)
         val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
             lastBillableTime,
             freeTime
         )
 
-        if (ridingDurations.duration + pausingDurations.duration < 2.minutes) {
-            return RideDurations(ridingDurations.duration, pausingDurations.duration, Duration.ZERO, Duration.ZERO)
+        if (ridingDuration + pausingDuration < 2.minutes) {
+            return RideDurations(ridingDuration, pausingDuration, Duration.ZERO, Duration.ZERO)
         }
 
-        return RideDurations(ridingDurations.duration, pausingDurations.duration, billableRidingDuration, billablePausingDuration)
+        return RideDurations(ridingDuration, pausingDuration, billableRidingDuration, billablePausingDuration)
     }
 
     private fun getRideDurations(
         rideEvents: List<RideEvent>,
         now: Instant
-    ): Pair<StateDuration, StateDuration> {
+    ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
-        val ridingDurations = StateDuration()
-        val pausingDurations = StateDuration()
+        var ridingDuration: Duration = ZERO
+        var pausingDuration: Duration = ZERO
         rideEvents.forEach { rideEvent ->
             val realDuration = durationBetween(lastEventTime, rideEvent.occurredOn)
 
             lastEventTime = rideEvent.occurredOn
 
             when (rideEvent.type) {
-                RideEventType.PAUSED -> ridingDurations.increment(realDuration, Duration.ZERO)
-                RideEventType.RESUMED -> pausingDurations.increment(realDuration, Duration.ZERO)
+                RideEventType.PAUSED -> {
+                    ridingDuration += realDuration
+                }
+                RideEventType.RESUMED -> {
+                    pausingDuration += realDuration
+                }
                 RideEventType.STARTED -> {}
             }
         }
 
         val realDuration = durationBetween(lastEventTime, now)
 
-        ridingDurations.increment(realDuration, Duration.ZERO)
-        return Pair(ridingDurations, pausingDurations)
+        ridingDuration += realDuration
+        return Pair(ridingDuration, pausingDuration)
     }
     private fun getBillableDurations(
         rideEvents: List<RideEvent>,
