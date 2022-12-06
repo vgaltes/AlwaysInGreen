@@ -65,8 +65,6 @@ object RideDurationCalculation {
         var freeTime1 = freeTime
         var ridingDuration: Duration = ZERO
         var pausingDuration: Duration = ZERO
-        val ridingDurations = StateDuration()
-        val pausingDurations = StateDuration()
         rideEvents.forEach { rideEvent ->
             val potentialBillableDuration =
                 if (lastBillableTime < lastEventTime) Duration.ZERO
@@ -81,11 +79,9 @@ object RideDurationCalculation {
             when (rideEvent.type) {
                 RideEventType.PAUSED -> {
                     ridingDuration += spanBillableDuration
-                    ridingDurations.increment(Duration.ZERO, spanBillableDuration)
                 }
                 RideEventType.RESUMED -> {
                     pausingDuration += spanBillableDuration
-                    pausingDurations.increment(Duration.ZERO, spanBillableDuration)
                 }
                 RideEventType.STARTED -> {}
             }
@@ -96,7 +92,6 @@ object RideDurationCalculation {
             else durationBetween(lastEventTime, lastBillableTime)
         val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime1)
 
-        ridingDurations.increment(Duration.ZERO, spanBillableDuration)
         ridingDuration += spanBillableDuration
         return Pair(ridingDuration, pausingDuration)
     }
