@@ -45,6 +45,8 @@ object RideDurationCalculation {
         initialFreeTime: Duration,
         billableDurationInSeconds: Long
     ): Pair<Duration, Duration> {
+        var lastEventTime = rideEvents.first().occurredOn
+        var lastBillableTime = lastEventTime.plusSeconds(billableDurationInSeconds)
 
         val adjustedRideEvents = adjustToLastBillableTime(rideEvents, lastBillableTime)
         return getDurations(adjustedRideEvents, lastBillableTime, initialFreeTime)
