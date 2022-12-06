@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3fe917ea-afdb-41d4-aaee-33d2d917e864" name="Changes" comment="">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
@@ -19,6 +20,9 @@
       <change afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/kotlin/RideDurationCalculation.kt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/test/kotlin/RideDurationCalculationShould.kt" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/RideDurationCalculation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/RideDurationCalculation.kt" afterDir="false" />
+>>>>>>> 533b043 (introduce adjust to last billable time)
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +108,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1670355729124</updated>
-      <workItem from="1670355730484" duration="5736000" />
+      <workItem from="1670355730484" duration="6494000" />
     </task>
     <servers />
   </component>

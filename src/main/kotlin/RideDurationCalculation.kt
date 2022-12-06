@@ -42,7 +42,15 @@ object RideDurationCalculation {
                                      lastBillableTime: Instant,
                                      initialFreeTime: Duration
     ): Pair<Duration, Duration> {
-        return getDurations(rideEvents, lastBillableTime, initialFreeTime)
+        val adjustedRideEvents = adjustToLastBillableTime(rideEvents, lastBillableTime)
+        return getDurations(adjustedRideEvents, lastBillableTime, initialFreeTime)
+    }
+
+    private fun adjustToLastBillableTime(rideEvents: List<RideEvent>, lastBillableTime: Instant): List<RideEvent> {
+        return rideEvents.map {
+            if (it.occurredOn > lastBillableTime) it.copy(occurredOn = lastBillableTime)
+            else it
+        }
     }
 
     private fun getDurations(
