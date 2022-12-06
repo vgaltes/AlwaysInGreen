@@ -19,7 +19,7 @@ object RideDurationCalculation {
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
         val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now, ZERO)
-        val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
+        val (billableRidingDuration, billablePausingDuration) = getRideDurations(
             rideEvents,
             lastBillableTime,
             freeTime
