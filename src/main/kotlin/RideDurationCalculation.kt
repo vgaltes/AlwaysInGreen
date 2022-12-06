@@ -34,7 +34,7 @@ object RideDurationCalculation {
 
     private fun getRideDurations(
         rideEvents: List<RideEvent>,
-        now: Instant,
+        lastBillableTime: Instant,
         initialFreetime: Duration
     ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
@@ -56,7 +56,7 @@ object RideDurationCalculation {
             }
         }
 
-        val realDuration = durationBetween(lastEventTime, now)
+        val realDuration = durationBetween(lastEventTime, lastBillableTime)
 
         ridingDuration += realDuration
         return Pair(ridingDuration, pausingDuration)
