@@ -24,7 +24,7 @@ object RideDurationCalculation {
             return RideDurations(ridingDurations.duration, pausingDurations.duration, Duration.ZERO, Duration.ZERO)
         }
 
-        return RideDurations(ridingDurations.duration, pausingDurations.duration, ridingDurations.billableDuration, pausingDurations.billableDuration)
+        return RideDurations(ridingDurations.duration, pausingDurations.duration, billableRidingDurations.billableDuration, billablePausingDurations.billableDuration)
     }
 
     private fun getDurations(
