@@ -72,45 +72,6 @@ object RideDurationCalculation {
 
         return Pair(ridingDuration, pausingDuration)
     }
-    private fun getBillableDurations(
-        rideEvents: List<RideEvent>,
-        lastBillableTime: Instant,
-        initialFreeTime: Duration
-    ): Pair<Duration, Duration> {
-        var lastEventTime = rideEvents.first().occurredOn
-        var freeTime = initialFreeTime
-        var ridingDuration: Duration = ZERO
-        var pausingDuration: Duration = ZERO
-        rideEvents.forEach { rideEvent ->
-            val potentialBillableDuration =
-                if (lastBillableTime < lastEventTime) Duration.ZERO
-                else if (lastBillableTime < rideEvent.occurredOn) durationBetween(lastEventTime, lastBillableTime)
-                else durationBetween(lastEventTime, minOf(rideEvent.occurredOn, lastBillableTime))
-
-            lastEventTime = rideEvent.occurredOn
-
-            val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime)
-            freeTime = newFreeTime
-
-            when (rideEvent.type) {
-                RideEventType.PAUSED -> {
-                    ridingDuration += spanBillableDuration
-                }
-                RideEventType.RESUMED -> {
-                    pausingDuration += spanBillableDuration
-                }
-                RideEventType.STARTED -> {}
-            }
-        }
-
-        val potentialBillableDuration =
-            if (lastBillableTime < lastEventTime) Duration.ZERO
-            else durationBetween(lastEventTime, lastBillableTime)
-        val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime)
-
-        ridingDuration += spanBillableDuration
-        return Pair(ridingDuration, pausingDuration)
-    }
 
     private fun getBillableDuration(duration: Duration, freeTime: Duration): Pair<Duration, Duration> =
         when {
