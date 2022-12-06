@@ -13,12 +13,10 @@ object RideDurationCalculation {
         billableDurationInSeconds: Long,
         now: Instant = Instant.now(),
     ): RideDurations {
-        var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
         val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now)
         val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
-            freeTime,
             billableDurationInSeconds,
             subscriptionName
         )
@@ -38,15 +36,15 @@ object RideDurationCalculation {
 
     private fun getBillableDurations(
         rideEvents: List<RideEvent>,
-        initialFreeTime: Duration,
         billableDurationInSeconds: Long,
         subscriptionName: String
     ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
         var lastBillableTime = lastEventTime.plusSeconds(billableDurationInSeconds)
+        var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
         val adjustedRideEvents = adjustToLastBillableTime(rideEvents, lastBillableTime)
-        return getDurations(adjustedRideEvents, lastBillableTime, initialFreeTime)
+        return getDurations(adjustedRideEvents, lastBillableTime, freeTime)
     }
 
     private fun adjustToLastBillableTime(rideEvents: List<RideEvent>, lastBillableTime: Instant): List<RideEvent> {
