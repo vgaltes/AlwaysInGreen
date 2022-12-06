@@ -14,11 +14,11 @@ object RideDurationCalculation {
     ): RideDurations {
         var lastEventTime = rideEvents.first().occurredOn
         var lastBillableTime = lastEventTime.plusSeconds(billableDurationInSeconds)
-        val ridingDurations = StateDuration()
-        val pausingDurations = StateDuration()
 
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
+        val ridingDurations = StateDuration()
+        val pausingDurations = StateDuration()
         rideEvents.forEach { rideEvent ->
             val realDuration = durationBetween(lastEventTime, rideEvent.occurredOn)
             val potentialBillableDuration =
