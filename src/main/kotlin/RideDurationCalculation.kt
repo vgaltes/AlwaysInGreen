@@ -63,14 +63,10 @@ object RideDurationCalculation {
         var pausingDuration: Duration = ZERO
         var freeTime =  initialFreeTime
         rideEvents.forEach { rideEvent ->
-            val potentialBillableDuration =
-                if (lastBillableTime < lastEventTime) Duration.ZERO
-                else if (lastBillableTime < rideEvent.occurredOn) durationBetween(lastEventTime, lastBillableTime)
-                else durationBetween(lastEventTime, minOf(rideEvent.occurredOn, lastBillableTime))
-
+            val realDuration = durationBetween(lastEventTime, rideEvent.occurredOn)
             lastEventTime = rideEvent.occurredOn
 
-            val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime)
+            val (spanBillableDuration, newFreeTime) = getBillableDuration(realDuration, freeTime)
             freeTime = newFreeTime
 
             when (rideEvent.type) {
