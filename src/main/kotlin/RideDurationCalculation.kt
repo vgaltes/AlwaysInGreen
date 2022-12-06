@@ -63,9 +63,13 @@ object RideDurationCalculation {
             }
         }
 
-        val realDuration = durationBetween(lastEventTime, lastBillableTime)
+        val potentialBillableDuration =
+            if (lastBillableTime < lastEventTime) Duration.ZERO
+            else durationBetween(lastEventTime, lastBillableTime)
+        val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime)
 
-        ridingDuration += realDuration
+        ridingDuration += spanBillableDuration
+
         return Pair(ridingDuration, pausingDuration)
     }
     private fun getBillableDurations(
