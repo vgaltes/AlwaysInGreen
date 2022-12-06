@@ -21,7 +21,6 @@ object RideDurationCalculation {
         val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now)
         val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
-            lastBillableTime,
             freeTime,
             billableDurationInSeconds
         )
@@ -41,7 +40,6 @@ object RideDurationCalculation {
 
     private fun getBillableDurations(
         rideEvents: List<RideEvent>,
-        lastBillableTime: Instant,
         initialFreeTime: Duration,
         billableDurationInSeconds: Long
     ): Pair<Duration, Duration> {
