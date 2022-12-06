@@ -2,6 +2,7 @@ package com.cooltra.zeus.pricing
 
 import java.time.Instant
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toKotlinDuration
 
@@ -62,6 +63,8 @@ object RideDurationCalculation {
     ): Pair<StateDuration, StateDuration> {
         var lastEventTime = rideEvents.first().occurredOn
         var freeTime1 = freeTime
+        var ridingDuration: Duration = ZERO
+        var pausingDuration: Duration = ZERO
         val ridingDurations = StateDuration()
         val pausingDurations = StateDuration()
         rideEvents.forEach { rideEvent ->
@@ -76,8 +79,14 @@ object RideDurationCalculation {
             freeTime1 = newFreeTime
 
             when (rideEvent.type) {
-                RideEventType.PAUSED -> ridingDurations.increment(Duration.ZERO, spanBillableDuration)
-                RideEventType.RESUMED -> pausingDurations.increment(Duration.ZERO, spanBillableDuration)
+                RideEventType.PAUSED -> {
+                    ridingDuration += spanBillableDuration
+                    ridingDurations.increment(Duration.ZERO, spanBillableDuration)
+                }
+                RideEventType.RESUMED -> {
+                    pausingDuration += spanBillableDuration
+                    pausingDurations.increment(Duration.ZERO, spanBillableDuration)
+                }
                 RideEventType.STARTED -> {}
             }
         }
@@ -88,6 +97,7 @@ object RideDurationCalculation {
         val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime1)
 
         ridingDurations.increment(Duration.ZERO, spanBillableDuration)
+        ridingDuration += spanBillableDuration
         return Pair(ridingDurations, pausingDurations)
     }
 
