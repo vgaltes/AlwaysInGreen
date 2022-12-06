@@ -65,6 +65,45 @@ object RideDurationCalculation {
         ridingDurations.increment(realDuration, spanBillableDuration)
         return Pair(ridingDurations, pausingDurations)
     }
+    private fun getBillableDurations(
+        rideEvents: List<RideEvent>,
+        lastEventTime: Instant,
+        lastBillableTime: Instant,
+        freeTime: Duration,
+        now: Instant
+    ): Pair<StateDuration, StateDuration> {
+        var lastEventTime1 = lastEventTime
+        var freeTime1 = freeTime
+        val ridingDurations = StateDuration()
+        val pausingDurations = StateDuration()
+        rideEvents.forEach { rideEvent ->
+            val realDuration = durationBetween(lastEventTime1, rideEvent.occurredOn)
+            val potentialBillableDuration =
+                if (lastBillableTime < lastEventTime1) Duration.ZERO
+                else if (lastBillableTime < rideEvent.occurredOn) durationBetween(lastEventTime1, lastBillableTime)
+                else durationBetween(lastEventTime1, minOf(rideEvent.occurredOn, lastBillableTime))
+
+            lastEventTime1 = rideEvent.occurredOn
+
+            val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime1)
+            freeTime1 = newFreeTime
+
+            when (rideEvent.type) {
+                RideEventType.PAUSED -> ridingDurations.increment(realDuration, spanBillableDuration)
+                RideEventType.RESUMED -> pausingDurations.increment(realDuration, spanBillableDuration)
+                RideEventType.STARTED -> {}
+            }
+        }
+
+        val realDuration = durationBetween(lastEventTime1, now)
+        val potentialBillableDuration =
+            if (lastBillableTime < lastEventTime1) Duration.ZERO
+            else durationBetween(lastEventTime1, lastBillableTime)
+        val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime1)
+
+        ridingDurations.increment(realDuration, spanBillableDuration)
+        return Pair(ridingDurations, pausingDurations)
+    }
 
     private fun getBillableDuration(duration: Duration, freeTime: Duration): Pair<Duration, Duration> =
         when {
