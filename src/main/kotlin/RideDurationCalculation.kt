@@ -22,7 +22,7 @@ object RideDurationCalculation {
         )
 
         if (ridingDuration + pausingDuration < 2.minutes) {
-            return RideDurations(ridingDuration, pausingDuration, Duration.ZERO, Duration.ZERO)
+            return RideDurations(ridingDuration, pausingDuration, ZERO, ZERO)
         }
 
         return RideDurations(ridingDuration, pausingDuration, billableRidingDuration, billablePausingDuration)
@@ -91,9 +91,9 @@ object RideDurationCalculation {
 
     private fun getBillableDuration(duration: Duration, freeTime: Duration): Pair<Duration, Duration> =
         when {
-            freeTime == Duration.ZERO -> duration to Duration.ZERO
-            freeTime != Duration.ZERO && duration < freeTime -> Duration.ZERO to (freeTime - duration)
-            else -> (duration - freeTime) to Duration.ZERO
+            freeTime == ZERO -> duration to ZERO
+            freeTime != ZERO && duration < freeTime -> ZERO to (freeTime - duration)
+            else -> (duration - freeTime) to ZERO
         }
 
     private fun durationBetween(
@@ -116,11 +116,4 @@ enum class RideEventType {
     PAUSED,
     RESUMED,
     STARTED
-}
-
-data class StateDuration(var duration: Duration = Duration.ZERO, var billableDuration: Duration = Duration.ZERO) {
-    fun increment(durationToIncrement: Duration, billableDurationToImcrement: Duration) {
-        this.duration = this.duration + durationToIncrement
-        this.billableDuration = this.billableDuration + billableDurationToImcrement
-    }
 }
