@@ -18,7 +18,7 @@ object RideDurationCalculation {
 
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
-        val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now)
+        val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now, ZERO)
         val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
             lastBillableTime,
@@ -34,7 +34,8 @@ object RideDurationCalculation {
 
     private fun getRideDurations(
         rideEvents: List<RideEvent>,
-        now: Instant
+        now: Instant,
+        initialFreetime: Duration
     ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
         var ridingDuration: Duration = ZERO
@@ -63,10 +64,10 @@ object RideDurationCalculation {
     private fun getBillableDurations(
         rideEvents: List<RideEvent>,
         lastBillableTime: Instant,
-        freeTime: Duration
+        initialFreeTime: Duration
     ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
-        var freeTime1 = freeTime
+        var freeTime = initialFreeTime
         var ridingDuration: Duration = ZERO
         var pausingDuration: Duration = ZERO
         rideEvents.forEach { rideEvent ->
@@ -77,8 +78,8 @@ object RideDurationCalculation {
 
             lastEventTime = rideEvent.occurredOn
 
-            val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime1)
-            freeTime1 = newFreeTime
+            val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime)
+            freeTime = newFreeTime
 
             when (rideEvent.type) {
                 RideEventType.PAUSED -> {
@@ -94,7 +95,7 @@ object RideDurationCalculation {
         val potentialBillableDuration =
             if (lastBillableTime < lastEventTime) Duration.ZERO
             else durationBetween(lastEventTime, lastBillableTime)
-        val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime1)
+        val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime)
 
         ridingDuration += spanBillableDuration
         return Pair(ridingDuration, pausingDuration)
