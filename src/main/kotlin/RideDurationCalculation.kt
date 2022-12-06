@@ -18,8 +18,8 @@ object RideDurationCalculation {
 
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
 
-        val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now, ZERO)
-        val (billableRidingDuration, billablePausingDuration) = getRideDurations(
+        val (ridingDuration, pausingDuration) = getRideDurations(rideEvents, now)
+        val (billableRidingDuration, billablePausingDuration) = getBillableDurations(
             rideEvents,
             lastBillableTime,
             freeTime
@@ -32,15 +32,28 @@ object RideDurationCalculation {
         return RideDurations(ridingDuration, pausingDuration, billableRidingDuration, billablePausingDuration)
     }
 
-    private fun getRideDurations(
+
+    private fun getRideDurations(rideEvents: List<RideEvent>,
+                                 lastTimeToConsider: Instant) : Pair<Duration, Duration> {
+        return getDurations(rideEvents, lastTimeToConsider, ZERO)
+    }
+
+    private fun getBillableDurations(rideEvents: List<RideEvent>,
+                                     lastBillableTime: Instant,
+                                     initialFreeTime: Duration
+    ): Pair<Duration, Duration> {
+        return getDurations(rideEvents, lastBillableTime, initialFreeTime)
+    }
+
+    private fun getDurations(
         rideEvents: List<RideEvent>,
         lastBillableTime: Instant,
-        initialFreetime: Duration
+        initialFreeTime: Duration
     ): Pair<Duration, Duration> {
         var lastEventTime = rideEvents.first().occurredOn
         var ridingDuration: Duration = ZERO
         var pausingDuration: Duration = ZERO
-        var freeTime =  initialFreetime
+        var freeTime =  initialFreeTime
         rideEvents.forEach { rideEvent ->
             val potentialBillableDuration =
                 if (lastBillableTime < lastEventTime) Duration.ZERO
