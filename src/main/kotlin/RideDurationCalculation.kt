@@ -46,10 +46,6 @@ object RideDurationCalculation {
 
         ridingDurations.increment(realDuration, spanBillableDuration)
 
-        if (ridingDurations.duration + pausingDurations.duration < 2.minutes) {
-            return RideDurations(ridingDurations.duration, pausingDurations.duration, Duration.ZERO, Duration.ZERO)
-        }
-
         return RideDurations(ridingDurations.duration, pausingDurations.duration, ridingDurations.billableDuration, pausingDurations.billableDuration)
     }
 

@@ -25,22 +25,6 @@ class RideDurationCalculationShould : StringSpec({
         billablePausingDuration shouldBe ZERO
     }
 
-    "return billable durations as zero if the rental is shorter than 2 minutes" {
-        val now = Instant.now()
-        val subscriptionName = "basic"
-        val rentalEvents = listOf(
-            RideEvent(STARTED, now.minusSeconds(119)),
-        )
-
-        val (ridingRentalDuration, pausedRentalDuration, billableRidingDuration, billablePausingDuration) =
-            RideDurationCalculation.getRideBillableDurations(rentalEvents, subscriptionName, 119, now)
-
-        ridingRentalDuration shouldBe 119.seconds
-        pausedRentalDuration shouldBe ZERO
-        billableRidingDuration shouldBe ZERO
-        billablePausingDuration shouldBe ZERO
-    }
-
     "return billable durations as zero if the rental is shorter than 30 minutes and the user is tester" {
         val now = Instant.now()
         val subscriptionName = "tester"
