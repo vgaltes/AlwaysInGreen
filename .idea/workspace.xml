@@ -4,21 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3fe917ea-afdb-41d4-aaee-33d2d917e864" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/RideDurationCalculation.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/kotlin/RideDurationCalculationShould.kt" afterDir="false" />
+    <list default="true" id="3fe917ea-afdb-41d4-aaee-33d2d917e864" name="Changes" comment="&#10;# Motivation:&#10;# Explain here the context, and why you're making that change.&#10;# What is the problem you're trying to solve.&#10;&#10;# Modifications:&#10;# Describe the modifications you've done.&#10;&#10;# Result:&#10;# After your change, what will change.&#10;&#10;# Relevant links&#10;# Add links to any releveant trello cards that may hold extra&#10;# context about this change">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/RideDurationCalculation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/RideDurationCalculation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/RideDurationCalculationShould.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/RideDurationCalculationShould.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +57,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Kotest.RideDurationCalculationShould: calculate durations for a rental without pauses">
     <configuration name="Tests in 'alwaysInGreenRefactor.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -89,9 +79,41 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="RideDurationCalculationShould: calculate durations for a rental without pauses" type="ioKotest" factoryName="Kotest" temporary="true" defaultName="singleModule">
+      <module name="alwaysInGreenRefactor.test" />
+      <option name="jrePath" value="" />
+      <option name="jrePathEnabled" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
+      <option name="programParameters" value="" />
+      <option name="specName" value="com.vgaltes.RideDurationCalculationShould" />
+      <option name="testPath" value="calculate durations for a rental without pauses" />
+      <option name="packageName" value="" />
+      <option name="vmparams" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RideDurationCalculationShould: return billable durations if the user is tester and the rental has pauses" type="ioKotest" factoryName="Kotest" temporary="true" defaultName="singleModule">
+      <module name="alwaysInGreenRefactor.test" />
+      <option name="jrePath" value="" />
+      <option name="jrePathEnabled" value="false" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
+      <option name="programParameters" value="" />
+      <option name="specName" value="com.vgaltes.RideDurationCalculationShould" />
+      <option name="testPath" value="return billable durations if the user is tester and the rental has pauses" />
+      <option name="packageName" value="" />
+      <option name="vmparams" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.Tests in 'alwaysInGreenRefactor.test'" />
+        <item itemvalue="Kotest.RideDurationCalculationShould: calculate durations for a rental without pauses" />
+        <item itemvalue="Kotest.RideDurationCalculationShould: return billable durations if the user is tester and the rental has pauses" />
       </list>
     </recent_temporary>
   </component>
@@ -104,6 +126,7 @@
       <option name="presentableId" value="Default" />
       <updated>1670355729124</updated>
       <workItem from="1670355730484" duration="1802000" />
+      <workItem from="1670591595712" duration="5617000" />
     </task>
     <servers />
   </component>

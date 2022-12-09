@@ -1,6 +1,6 @@
-package com.cooltra.zeus.pricing
+package com.vgaltes
 
-import com.cooltra.zeus.pricing.RideEventType.*
+import com.vgaltes.RideEventType.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.time.Instant
@@ -22,22 +22,6 @@ class RideDurationCalculationShould : StringSpec({
         ridingRentalDuration shouldBe 2.minutes
         pausedRentalDuration shouldBe ZERO
         billableRidingDuration shouldBe 2.minutes
-        billablePausingDuration shouldBe ZERO
-    }
-
-    "return billable durations as zero if the rental is shorter than 2 minutes" {
-        val now = Instant.now()
-        val subscriptionName = "basic"
-        val rentalEvents = listOf(
-            RideEvent(STARTED, now.minusSeconds(119)),
-        )
-
-        val (ridingRentalDuration, pausedRentalDuration, billableRidingDuration, billablePausingDuration) =
-            RideDurationCalculation.getRideBillableDurations(rentalEvents, subscriptionName, 119, now)
-
-        ridingRentalDuration shouldBe 119.seconds
-        pausedRentalDuration shouldBe ZERO
-        billableRidingDuration shouldBe ZERO
         billablePausingDuration shouldBe ZERO
     }
 
