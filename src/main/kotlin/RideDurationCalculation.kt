@@ -2,6 +2,7 @@ package com.cooltra.zeus.pricing
 
 import java.time.Instant
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toKotlinDuration
 
@@ -12,49 +13,47 @@ object RideDurationCalculation {
         billableDurationInSeconds: Long,
         now: Instant = Instant.now(),
     ): RideDurations {
-        var lastEventTime = rideEvents.first().occurredOn
-        var lastBillableTime = lastEventTime.plusSeconds(billableDurationInSeconds)
-        val ridingDurations = StateDuration()
-        val pausingDurations = StateDuration()
-
+        var firstEventTime = rideEvents.first().occurredOn
+        var lastBillableTime = firstEventTime.plusSeconds(billableDurationInSeconds)
         var freeTime = if (subscriptionName == "tester") 30.minutes else 0.minutes
+        val firstBillableTime =
+            if (firstEventTime.plusSeconds(freeTime.inWholeSeconds) < lastBillableTime ) firstEventTime.plusSeconds(freeTime.inWholeSeconds)
+            else lastBillableTime
+
+        val (ridingDuration, pausingDuration) = getDurations(rideEvents, now)
+
+        val rideEventsConsideringCustomEnding = rideEvents.map { if ( it.occurredOn > lastBillableTime ) it.copy(occurredOn = lastBillableTime) else it }
+        val rideEventsConsideringFreeTime = rideEventsConsideringCustomEnding.map { if (it.occurredOn < firstBillableTime) it.copy(occurredOn = firstBillableTime) else it }
+
+        val (billableRidingDuration, billablePausingDuration) = getDurations(rideEventsConsideringFreeTime, lastBillableTime)
+
+        return RideDurations(ridingDuration, pausingDuration, billableRidingDuration, billablePausingDuration)
+    }
+
+    private fun getDurations(
+        rideEvents: List<RideEvent>,
+        lastTimeToConsider: Instant
+    ): Pair<Duration, Duration> {
+        var lastEventTime = rideEvents.first().occurredOn
+        var ridingDuration = ZERO
+        var pausingDuration = ZERO
 
         rideEvents.forEach { rideEvent ->
             val realDuration = durationBetween(lastEventTime, rideEvent.occurredOn)
-            val potentialBillableDuration =
-                if (lastBillableTime < lastEventTime) Duration.ZERO
-                else if (lastBillableTime < rideEvent.occurredOn) durationBetween(lastEventTime, lastBillableTime)
-                else durationBetween(lastEventTime, minOf(rideEvent.occurredOn, lastBillableTime))
-
             lastEventTime = rideEvent.occurredOn
 
-            val (spanBillableDuration, newFreeTime) = getBillableDuration(potentialBillableDuration, freeTime)
-            freeTime = newFreeTime
-
             when (rideEvent.type) {
-                RideEventType.PAUSED -> ridingDurations.increment(realDuration, spanBillableDuration)
-                RideEventType.RESUMED -> pausingDurations.increment(realDuration, spanBillableDuration)
+                RideEventType.PAUSED -> ridingDuration += realDuration
+                RideEventType.RESUMED -> pausingDuration += realDuration
                 RideEventType.STARTED -> {}
             }
         }
 
-        val realDuration = durationBetween(lastEventTime, now)
-        val potentialBillableDuration =
-            if (lastBillableTime < lastEventTime) Duration.ZERO
-            else durationBetween(lastEventTime, lastBillableTime)
-        val (spanBillableDuration, _) = getBillableDuration(potentialBillableDuration, freeTime)
+        val realDuration = durationBetween(lastEventTime, lastTimeToConsider)
 
-        ridingDurations.increment(realDuration, spanBillableDuration)
-
-        return RideDurations(ridingDurations.duration, pausingDurations.duration, ridingDurations.billableDuration, pausingDurations.billableDuration)
+        ridingDuration += realDuration
+        return Pair(ridingDuration, pausingDuration)
     }
-
-    private fun getBillableDuration(duration: Duration, freeTime: Duration): Pair<Duration, Duration> =
-        when {
-            freeTime == Duration.ZERO -> duration to Duration.ZERO
-            freeTime != Duration.ZERO && duration < freeTime -> Duration.ZERO to (freeTime - duration)
-            else -> (duration - freeTime) to Duration.ZERO
-        }
 
     private fun durationBetween(
         initial: Instant,
@@ -76,11 +75,4 @@ enum class RideEventType {
     PAUSED,
     RESUMED,
     STARTED
-}
-
-data class StateDuration(var duration: Duration = Duration.ZERO, var billableDuration: Duration = Duration.ZERO) {
-    fun increment(durationToIncrement: Duration, billableDurationToImcrement: Duration) {
-        this.duration = this.duration + durationToIncrement
-        this.billableDuration = this.billableDuration + billableDurationToImcrement
-    }
 }
